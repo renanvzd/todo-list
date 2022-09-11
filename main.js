@@ -9,15 +9,29 @@ window.addEventListener('load', () => {
   const username = localStorage.getItem('todoUsername') || '';
   nameInput.value = username;
 
+  newId = 0;
+  function generateId() {
+    newId = todos.length + 1
+    return newId;
+  };
+
   newTodoForm.addEventListener('submit', e => {
     e.preventDefault();
 
     const todo = {
+      id: generateId(),
       content: e.target.elements.content.value,
       category: e.target.elements.category.value,
       done: false,
       createdAt: new Date().getTime()
     }
+
+    // console.log(newId)
+    // if (newId >= 1) {
+    //   newId = newId++;
+    //   console.log(newId)
+    //   return newId;
+    // }
 
     todos.push(todo);
 
@@ -62,7 +76,10 @@ function DisplayTodos() {
     edit.classList.add('edit');
     deleteButton.classList.add('delete');
 
-    content.innerHTML = `<input type="text" value="${todo.content}" readonly>`;
+    content.innerHTML = `
+    <input type="text" value="${todo.id + "."}" readonly>
+    <input type="text" value="${todo.content}" readonly>
+    `;
     edit.innerHTML = 'Edit';
     deleteButton.innerHTML = 'Delete';
 
@@ -109,6 +126,18 @@ function DisplayTodos() {
 
     deleteButton.addEventListener('click', (e) => {
       todos = todos.filter(t => t != todo);
+      // console.log(todos)
+      // console.log(todo)
+      for (let index of todos) {
+        if (todo.id < index.id) {
+          console.log("todo.id - " + todo.id);
+          console.log("index.id - " + index.id)
+          console.log("\n");
+          let idReduced = index.id - 1
+          index.id = idReduced;
+        }
+      }
+
       localStorage.setItem('todos', JSON.stringify(todos));
       DisplayTodos()
     })
